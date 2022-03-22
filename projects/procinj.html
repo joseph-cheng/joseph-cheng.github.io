@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>
+      windows process injector | projects
+    </title>
+
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+  </head>
+  <body>
+  <a class="home" href="../index.html">HOME</a>
+  <div class="column">
+      <h1><a href="../projects.html">../PROJECTS</a></h1>
+      <h2>WINDOWS PROCESS INJECTOR | <a href="https://github.com/joseph-cheng/process-injection">github</a> (external)</h2>
+    <hr>
+
+    I completed this project as part of a summer internship with F-Secure in 2021. I also completed a presentation and blog post on this project for the internal F-Secure consultancy, although I have lost access to these :(.
+
+    <br>
+    <br>
+
+    The purpose of this project was to implement techniques for process injection on windows.
+
+    <h3>Basics of Process Injection</h3>
+
+    Process injection is a technique leveraged by malware to make it harder to detect. If the process <code>malware.exe</code> is running, this is pretty suspicious. In order to be stealthier, it would be great if we could run our malicious code under the guise of another process. For example, if we had our malicious code running under <code>firefox.exe</code>, then any of our network requests would blend in with the behaviour of <code>firefox.exe</code>.
+
+    <br>
+    <br>
+
+    This is exactly what process injection does: it allows you to inject your malicious code into another process and get it running. In this section, we'll describe a very simple form of process injection: <b>DLL injection</b>.
+
+    <br>
+    <br>
+    DLL injection has one prerequisite: we require our payload to be compiled as a DLL file and stored on disk. Then there are just a few steps:
+
+    <dl>
+        <dd> Use the <code>VirtualAllocEx()</code> Windows API call to allocate some memory in the taget process.</dd>
+        <dd> Use the <code>WriteProcessMemory()</code> Windows API call to write the <b>path</b> to our payload DLL in this newly-allocated memory.
+
+        <dd> Use the <code>CreateRemoteThread()</code> Windows API call to start a thread in the target process. Use the <code>lpStartAddress</code> parameter to make the thread start at the entrypoint to the <code>LoadLibraryA()</code> function (which can be found using <code>GetProcAddress()</code>). Use the <code>lpParameter</code> parameter to pass the address of our DLL path into the call to <code>LoadLibraryA()</code>.
+    </dl>
+
+    And you're done! To understand what's going on here, we need to know what the <code>LoadLibraryA()</code> call does. This function is used to dynamically load a library into a process. As a side effect, it will run the <code>DllMain()</code> function of the DLL, in case the library needs to run some set-up code. If we have our evil payload in this <code>DllMain()</code> function, then we get process injection.
+
+    <br>
+    <br>
+    <h3>This Project</h3>
+    This projects implements the aforementioned DLL injection, as well as a variety of other techniques which are given in the repository's README. Notably, the project implements the <a href="https://lospi.net/security/assembly/c/cpp/developing/software/2017/03/04/gargoyle-memory-analysis-evasion.html">gargoyle</a> (external) process injection technique natively in x64 Windows, which I have not seen anywhere else online. You can read about this implementation <a href="https://github.com/joseph-cheng/process-injection/blob/master/GARGOYLE.md">here</a> (external), although this document expects a reasonable proficiency with gargoyle and process injection.
+
+  </div>
+  </body>
+</html>

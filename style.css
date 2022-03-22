@@ -35,12 +35,15 @@ a {
 }
 
 a:hover {
-  text-decoration: underline;
+  text-decoration: underline dotted;
 }
 
 dd {
   display: list-item;
   padding-inline-start: 1ch;
   list-style-type: "✧";
+}
 
+code {
+  background-color: #c6ad6e;
 }
